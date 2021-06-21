@@ -40,7 +40,19 @@ pub use frame_support::{
 use pallet_transaction_payment::CurrencyAdapter;
 
 /// Import the template pallet.
-pub use pallet_template;
+// pub use pallet_template;
+
+/// Import the hello pallet
+pub use pallet_hello;
+
+/// Import the hello pallet
+pub use pallet_nicks;
+
+/// Import the pallet_bridge pallet
+// pub use pallet_bridge;
+
+/// Import the pallet_bridge_executor pallet
+// pub use pallet_bridge_executor;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -95,8 +107,8 @@ pub mod opaque {
 // To learn more about runtime versioning and what each of the following value means:
 //   https://substrate.dev/docs/en/knowledgebase/runtime/upgrades#runtime-versioning
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("node-template"),
-	impl_name: create_runtime_str!("node-template"),
+	spec_name: create_runtime_str!("baybaybay"),
+	impl_name: create_runtime_str!("baybaybay"),
 	authoring_version: 1,
 	// The version of the runtime specification. A full node will not attempt to use its native
 	//   runtime in substitute for the on-chain Wasm runtime unless all of `spec_name`,
@@ -269,8 +281,8 @@ impl pallet_sudo::Config for Runtime {
 	type Call = Call;
 }
 
-/// Configure the pallet-template in pallets/template.
-impl pallet_template::Config for Runtime {
+/// Configure the pallet-hello in pallets/hello.
+impl pallet_hello::Config for Runtime {
 	type Event = Event;
 }
 
@@ -290,7 +302,11 @@ construct_runtime!(
 		TransactionPayment: pallet_transaction_payment::{Pallet, Storage},
 		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>},
 		// Include the custom logic from the pallet-template in the runtime.
-		TemplateModule: pallet_template::{Pallet, Call, Storage, Event<T>},
+		// TemplateModule: pallet_template::{Pallet, Call, Storage, Event<T>},
+		Hello: pallet_hello::{Pallet, Call, Storage, Event<T>},
+		Nicks: pallet_nicks::{Pallet, Call, Storage, Event<T>},
+		// ChainBridge: pallet_bridge::{Pallet, Call, Storage, Event<T>},
+		// BridgeExecutor: pallet_bridge_executor::{Pallet, Call, Storage, Event, Config},ainbr
 	}
 );
 
@@ -486,10 +502,59 @@ impl_runtime_apis! {
 			add_benchmark!(params, batches, frame_system, SystemBench::<Runtime>);
 			add_benchmark!(params, batches, pallet_balances, Balances);
 			add_benchmark!(params, batches, pallet_timestamp, Timestamp);
-			add_benchmark!(params, batches, pallet_template, TemplateModule);
+			// add_benchmark!(params, batches, pallet_template, TemplateModule);
 
 			if batches.is_empty() { return Err("Benchmark not found for this pallet.".into()) }
 			Ok(batches)
 		}
 	}
 }
+
+/// Add this code block to your template for Nicks:
+parameter_types! {
+	// Choose a fee that incentivizes desireable behavior.
+	pub const NickReservationFee: u128 = 100;
+	pub const MinNickLength: usize = 8;
+	// Maximum bounds on storage are important to secure your chain.
+	pub const MaxNickLength: usize = 32;
+}
+
+impl pallet_nicks::Config for Runtime {
+	// The Balances pallet implements the ReservableCurrency trait.
+	// `Balances` is defined in `construct_runtimes!` macro. See below.
+	// https://substrate.dev/rustdocs/v3.0.0-monthly-2021-05/pallet_balances/index.html#implementations-2
+	type Currency = Balances;
+
+	// Use the NickReservationFee from the parameter_types block.
+	type ReservationFee = NickReservationFee;
+
+	// No action is taken when deposits are forfeited.
+	type Slashed = ();
+
+	// Configure the FRAME System Root origin as the Nick pallet admin.
+	// https://substrate.dev/rustdocs/v3.0.0-monthly-2021-05/frame_system/enum.RawOrigin.html#variant.Root
+	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
+
+	// Use the MinNickLength from the parameter_types block.
+	type MinLength = MinNickLength;
+
+	// Use the MaxNickLength from the parameter_types block.
+	type MaxLength = MaxNickLength;
+
+	// The ubiquitous event type.
+	type Event = Event;
+}
+
+// impl pallet_bridge::Config for Runtime {
+// 	type Event = Event;
+// 	type AdminOrigin = EnsureRoot<AccountId>;
+// 	type Proposal = Call;
+// 	type ChainId = BridgeChainId;
+// 	type ProposalLifetime = ProposalLifetime;
+// }
+
+// impl pallet_bridge_executor::Config for Runtime {
+// 	type Event = Event;
+// 	type BridgeOrigin = pallet_bridge::EnsureBridge<Runtime>;
+// 	type Currency = Balances;
+// }

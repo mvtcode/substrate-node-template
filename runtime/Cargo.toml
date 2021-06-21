@@ -45,8 +45,15 @@ sp-std = {default-features = false, version = '3.0.0', git = 'https://github.com
 sp-transaction-pool = {default-features = false, version = '3.0.0', git = 'https://github.com/paritytech/substrate.git', tag = 'monthly-2021-05'}
 sp-version = {default-features = false, version = '3.0.0', git = 'https://github.com/paritytech/substrate.git', tag = 'monthly-2021-05'}
 
+# New pallet
+# pallet-nicks = { default-features = false, version = '3.0.0', git = 'https://github.com/paritytech/substrate.git', tag = 'monthly-2021-05' }
+
 # local dependencies
-pallet-template = {default-features = false, version = '3.0.0', path = '../pallets/template'}
+# pallet-template = {default-features = false, version = '3.0.0', path = '../pallets/template'}
+pallet-hello = { default-features = false, version = '3.0.0', path = '../pallets/hello' }
+pallet-nicks = { default-features = false, version = '3.0.0', path = '../pallets/nicks' }
+# pallet-bridge = { default-features = false, path = "../pallets/bridge" }
+# pallet-bridge-executor = { default-features = false, path = "../pallets/bridge-executor" }
 
 [features]
 default = ['std']
@@ -57,7 +64,7 @@ runtime-benchmarks = [
 	'frame-system/runtime-benchmarks',
 	'hex-literal',
 	'pallet-balances/runtime-benchmarks',
-	'pallet-template/runtime-benchmarks',
+	# 'pallet-template/runtime-benchmarks',
 	'pallet-timestamp/runtime-benchmarks',
 	'sp-runtime/runtime-benchmarks',
 ]
@@ -72,7 +79,7 @@ std = [
 	'pallet-grandpa/std',
 	'pallet-randomness-collective-flip/std',
 	'pallet-sudo/std',
-	'pallet-template/std',
+	# 'pallet-template/std',
 	'pallet-timestamp/std',
 	'pallet-transaction-payment-rpc-runtime-api/std',
 	'pallet-transaction-payment/std',
@@ -87,4 +94,9 @@ std = [
 	'sp-std/std',
 	'sp-transaction-pool/std',
 	'sp-version/std',
+	
+	'pallet-nicks/std',
+	'pallet-hello/std',
+	# 'pallet-bridge/std',
+  # 'pallet-bridge-executor/std',
 ]
